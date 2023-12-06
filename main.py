@@ -6,7 +6,7 @@ import base64
 
 def main():
 
-    print("PARTE 1: Geração de chaves e cifra ------\n")
+    print("PARTE 1: Geração de chaves e cifra\n")
 
     with open("input.txt", "rb") as file:
         message = file.read()
@@ -22,26 +22,21 @@ def main():
         file.write(msg_enc)
 
     msg_dec = rsa_oaep.decrypt(int.from_bytes(msg_enc, "big"), private_key)
-    print(f'Mensagem decifrada: {msg_dec}')
+    print(f'\nMensagem decifrada: {msg_dec}')
 
 
     print("\nParte II: Assinatura\n")
 
-    assinatura = signature.sign_message(message, public_key)
-    assinatura = base64.b64encode(assinatura)
-    print(f'Mensangem assinada: {assinatura}\n')
+    sign = signature.sign_message(message, private_key)
+    print(f'Mensangem assinada: {sign}\n')
 
     print("Parte III: Verificação\n")
-
-    assinatura = base64.b64decode(assinatura)
-    dec_assinatura = signature.verify_signature(message, private_key, assinatura)
-
-    print()
+    dec_assinatura = signature.verify_signature(message, public_key, sign)
 
     if dec_assinatura:
-        print("Verificação correnta")
+        print("Verificação correta")
     else:
-        print("Verificação incorrenta")
+        print("Verificação incorreta")
 
 if __name__ == '__main__':
     main()

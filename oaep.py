@@ -34,7 +34,7 @@ def oaep_encode(message, k):
     seed = randbytes(hlen)
 
     ps_len =  k - mlen - (2 * hlen) - 2
-    ps = b'0x00' * ps_len
+    ps = b'\x00' * ps_len
     db = lhash + ps + b'\x01' + message
 
     db_mask = mgf1(seed, k - hlen - 1)
@@ -56,14 +56,9 @@ def oaep_decode(encoded_m, k):
     db_mask = mgf1(seed, k - hlen - 1)
     db = xor_bytes(masked_db, db_mask)
 
-    i = hlen
-    while i < len(db):
-        if db[i] == 0:
-            i += 1
-            continue
-        elif db[i] == 1:
-            i += 1
+    for i in range(hlen, len(db)):
+        if db[i] == 1:
             break
 
-    message = db[i:]  
+    message = db[i+1:]  
     return message
